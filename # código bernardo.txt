@@ -1,0 +1,73 @@
+# código bernardo
+
+import streamlit as st
+import pandas as pd
+
+# configurando layout da página
+st.set_page_config(
+    page_title='Acompanhamento de Vendas',
+    layout='wide')
+
+# configurando título e legenda
+col1, col2 = st.columns([1,12]) # divisão da pagina em colunas (1 parte para 9 partes)
+with col1:
+    st.image('logo.jpg', width=100)
+with col2:
+    st.title('Acompanhamento de Vendas - Botucaraí Alimentos')
+
+st.markdown("Faça o upload do arquivo no campo lateral")
+
+df = pd.DataFrame()  # iniciando o data frame em 0
+
+with st.sidebar:
+    arq = st.file_uploader("Upload de arquivo", type=['xlsx', 'csv'])
+
+    if arq is not None:  # verifica se o usuário fez o upload do arquivo ante de processá-lo
+        if not arq.name.endswith('.xlsx'):
+            df = pd.read_csv(arq)
+        else:
+            df = pd.read_excel(arq)
+
+       #  st.success('Arquivo carregado com sucesso!')
+        st.title('Tabela:')
+        st.dataframe(df)
+
+if arq is not None:
+    df = pd.read_excel(arq)
+
+    # Filtro por vendedor
+    lista_vend = df['Vendedor'].unique().tolist() # criação de lista com os nomes da coluna 'vendedor'
+    lista_mes = df['Mês'].unique().tolist() # criação de lista com os valores da coluna 'mes'
+    lista_empresa = df['Empresa'].unique().tolist() # criação de lista com os valores da coluna 'empresa'
+
+    # Aplica o filtro
+    vend_selecionado = st.multiselect('Selecione o vendedor', lista_vend) #, default=lista_vend) # default é o que será o padrão (se não selecionar nenhum, todos irão aparecer)
+    mes_selecionado = st.multiselect('Selecione o mês', lista_mes) #, default=lista_mes)
+    lista_empresa = st.selectbox('Seleciona a empresa',lista_empresa) #, default=lista_empresa)
+
+    filtrado = df[
+        (df['Vendedor'].isin(vend_selecionado)) &
+        (df['Mês'].isin(mes_selecionado)) &
+        (df['Empresa'] == lista_empresa)
+        ]
+
+    col1, col2 = st.columns([1,3])
+
+    with col1:
+        st.subheader('Vendas por Empresa')
+        st.bar_chart(filtrado.set_index('Vendedor')['Faturamento']) # setando vendedor como valores do eixo x e faturamento no eixo y
+
+    # Gráfico de linha por vendedor ao longo do tempo (mês)
+    tabela_linhas = filtrado.pivot_table(
+        index='Mês',
+        columns='Vendedor',
+        values='Faturamento',
+        aggfunc='sum'  # ou 'mean', se fizer sentido
+    )
+
+    with col2:
+        st.subheader('Faturamento por Vendedor ao Longo dos Meses')
+        st.line_chart(tabela_linhas)
+
+    st.title('Faturamento Mensal')
+    st.bar_chart(df.set_index('Mês')['Faturamento'])
