@@ -34,6 +34,10 @@ with st.sidebar:
             df = pd.read_excel(arq)
         else:
             df = pd.read_csv(arq)
+        ordem_meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+        df['Mês'] = pd.Categorical(df['Mês'], categories=ordem_meses, ordered=True)
+
         st.dataframe(df)
 
 if arq is not None:
@@ -78,7 +82,7 @@ if arq is not None:
             """)
             linhas(df_pivot)
 
-        st.subheader('**Faturamento mensal por empresa**')
+        st.subheader('**Faturamento geral por empresa**')
         st.markdown(f'''**Empresa selecionada:** {", ".join(empresa_selecionada)}''')
 
         df_mes = df_agrupado.pivot(index='Mês', columns='Empresa_Vendedor', values='Faturamento')
@@ -88,3 +92,5 @@ if arq is not None:
 
     else:
         st.info('Nenhum filtro selecionado')
+
+    st.markdown('teste')
