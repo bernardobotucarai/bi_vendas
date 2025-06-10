@@ -92,5 +92,3 @@ if arq is not None:
 
     else:
         st.info('Nenhum filtro selecionado')
-
-    st.markdown('teste')
