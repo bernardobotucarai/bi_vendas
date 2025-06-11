@@ -82,6 +82,14 @@ if arq is not None:
             """)
             linhas(df_pivot)
 
+        
+        st.subheader('**Gráfico de área**')
+        st.markdown(f"""
+            **Empresa selecionada:** {", ".join(empresa_selecionada)}  
+            **Vendedor selecionado:** {", ".join(vend_selecionado)}
+            """)
+        st.area_chart(df_pivot)
+
         st.subheader('**Faturamento geral por empresa**')
         st.markdown(f'''**Empresa selecionada:** {", ".join(empresa_selecionada)}''')
 
@@ -90,7 +98,6 @@ if arq is not None:
         df_empresa_total = df_empresa_total.set_index('Empresa')
         barras(df_empresa_total)
 
-        st.area_chart(df_pivot)
 
     else:
         st.info('Nenhum filtro selecionado')
