@@ -90,5 +90,7 @@ if arq is not None:
         df_empresa_total = df_empresa_total.set_index('Empresa')
         barras(df_empresa_total)
 
+        st.area_chart(df_pivot)
+
     else:
         st.info('Nenhum filtro selecionado')
